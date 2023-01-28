@@ -1,12 +1,8 @@
-//Create a dynamic array class called "CircularDynamicArray" class. It should manage the storage of an array that can grow and shrink. The class should be implemented using templates. As items are added and removed from both the front and end of the array, the items will always be referenced using indices 0...size-1
-
 #include <iostream>
 #include <string>
 
 using namespace std;
 
-//code a circulardynamic array. Default constructor. The array should be a capacity of 2 and size 0. Make the running time O(1)
-//for this constructor the array should be of capacity and size s.
 
 template <class T>
 class CircularDynamicArray
