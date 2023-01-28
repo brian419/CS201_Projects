@@ -38,26 +38,18 @@ class CircularDynamicArray
 template <class T>
 CircularDynamicArray<T>::CircularDynamicArray() //this is the default constructor
 {
-    capacity = 2;
-    size = 0;
-    front = 0;
+    capacity = 2; //this sets the circular dynamic array to capacity of 2.
+    size = 0; //this sets the circular dynamic array to size of 0. 
+    front = 0; 
     back = 0;
     array = new T[capacity];
 }
-{
-    capacity = 2;
-    size = 0;
-    front = 0;
-    back = 0;
-    array = new T[capacity];
-}
-
 
 template <class T>
 CircularDynamicArray<T>::CircularDynamicArray(int s) //this is the CircularDynamicArray(int s) constructor
 {
-    capacity = s;
-    size = 0;
+    capacity = s; //this sets the capacity of the array to input s
+    size = s; //this sets the size of the array to input s
     front = 0;
     back = 0;
     array = new T[capacity];
