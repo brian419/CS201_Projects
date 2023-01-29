@@ -3,9 +3,6 @@
 
 using namespace std;
 
-
-//we're failing the "foo"
-
 template <class T>
 class CircularDynamicArray
 {
@@ -40,6 +37,9 @@ class CircularDynamicArray
 
 };
 
+//create a foo function 
+
+
 template <class T>
 CircularDynamicArray<T>::CircularDynamicArray()
 {
@@ -58,6 +58,7 @@ CircularDynamicArray<T>::CircularDynamicArray(int s)
     front = 0;
     back = 0;
     array = new T[capacityInt];
+    
 }
 
 template <class T>
@@ -105,9 +106,16 @@ void CircularDynamicArray<T>::addEnd(T v)
 
 }
 
+//add a addFront fucntion that stores the input v at the beginning of the array and increases the size of the array by 1. Should double capactiy when the new element doesn't fit.
 template <class T>
 void CircularDynamicArray<T>::addFront(T v)
 {
+    for (int i = size; i > 0; i--)
+    {
+        array[i] = array[i - 1];
+    }
+    array[0] = v;
+    size++;
     if (size == capacityInt)
     {
         T *temp = new T[capacityInt * 2];
@@ -119,9 +127,6 @@ void CircularDynamicArray<T>::addFront(T v)
         array = temp;
         capacityInt = capacityInt * 2;
     }
-    front = (front - 1) % capacityInt;
-    array[front] = v;
-    size++;
 }
 
 //the delEnd() function should shrink the capacity when only 25% of the array is being used
@@ -240,6 +245,7 @@ T CircularDynamicArray<T>::QuickSelect(int k)
     }
 }
 
+
 template <class T>
 T CircularDynamicArray<T>::WCSelect(int k) //bad, it fails the phase1main test
 {
@@ -291,6 +297,7 @@ T CircularDynamicArray<T>::WCSelect(int k) //bad, it fails the phase1main test
         }
     }
 }
+
 
 template <class T>
 void CircularDynamicArray<T>::stableSort()
