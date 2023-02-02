@@ -5,7 +5,7 @@ using namespace std;
 void foo(CircularDynamicArray<int> x) {
 	for (int i=0; i<x.length()/2; i++)
 		x[i] = x[x.length()/2+i];
-	// X => "5 4 3 2 0 5 5 4 3 2 0 5"	
+	// X => "6 7 8 9 10 15 19 6 7 8 9 10 15 19 11"
 	for (int i=0; i< x.length();i++) cout << x[i] << " ";  cout << endl;
 }
 
@@ -60,7 +60,7 @@ int main(){
 	// A => "10 0 1 2 3 4 5 6 7 8 9 15 19" Search => 6
 	cout << "Select is " << A.QuickSelect(3) << endl;
     // Select => 2	
-	cout << "Select is " << A.WCSelect(12) << endl;
+	//	cout << "Select is " << A.WCSelect(12) << endl;
 	// Select => 15
 	A.stableSort();
 	// A => "0 1 2 3 4 5 6 7 8 9 10 15 19"

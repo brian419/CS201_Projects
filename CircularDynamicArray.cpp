@@ -12,12 +12,14 @@ class CircularDynamicArray
         int size;
         int front;
         int back;
-        int capacityInt;
+        int capacityInt; 
 
     public: 
 
         CircularDynamicArray();
         CircularDynamicArray(int s);
+        CircularDynamicArray(const CircularDynamicArray<T> &other);
+        CircularDynamicArray<T>& operator=(const CircularDynamicArray<T> &other);
         ~CircularDynamicArray();
         T& operator[](int i);
         void addEnd(T v);
@@ -33,32 +35,65 @@ class CircularDynamicArray
         int linearSearch(T e);
         int binSearch(T e);
         void reverse();
+        
 
 
 };
 
-//create a foo function 
-
-
 template <class T>
 CircularDynamicArray<T>::CircularDynamicArray()
 {
-    capacityInt = 2;
-    size = 0;
-    front = 0;
-    back = 0;
-    array = new T[capacityInt];
+    this->capacityInt = 2;
+    this->size = 0;
+    this->front = 0;
+    this->back = 0;
+    this->array = new T[capacityInt];
 }
 
 template <class T>
 CircularDynamicArray<T>::CircularDynamicArray(int s)
 {
-    capacityInt = s;
-    size = s;
-    front = 0;
-    back = 0;
-    array = new T[capacityInt];
-    
+    this->capacityInt = s;
+    this->size = s;
+    this->front = 0;
+    this->back = 0;
+    this->array = new T[capacityInt];
+}
+
+//create copy constructor
+template <class T>
+CircularDynamicArray<T>::CircularDynamicArray(const CircularDynamicArray<T> &other)
+{
+    this->capacityInt = other.capacityInt;
+    this->size = other.size;
+    this->front = other.front;
+    this->back = other.back;
+    this->array = new T[capacityInt];
+    for (int i = 0; i < size; i++)
+    {
+        array[i] = other.array[i];
+    }
+}
+
+//create assignment operator
+template <class T>
+CircularDynamicArray<T>& CircularDynamicArray<T>::operator=(const CircularDynamicArray<T> &other)
+{
+
+    if (this != &other)
+    {
+        delete[] array;
+        this->capacityInt = other.capacityInt;
+        this->size = other.size;
+        this->front = other.front;
+        this->back = other.back;
+        this->array = new T[capacityInt];
+        for (int i = 0; i < size; i++)
+        {
+            array[i] = other.array[i];
+        }
+    }
+    return *this;
 }
 
 template <class T>
@@ -70,26 +105,17 @@ CircularDynamicArray<T>::~CircularDynamicArray()
 template <class T>
 T& CircularDynamicArray<T>::operator[](int i)
 {
-    if (i < 0 || i >= size)
+    if (i < 0 || i > size)
     {
         cout << "Index out of bounds" << endl;
     }
-    else
-    {
-        return array[i];
-    }
+    return array[i];
+
 }
 
 template <class T>
 void CircularDynamicArray<T>::addEnd(T v)
 {
-    //add the element to the end of the array.
-    for (int i = 0; i < size; i++)
-    {
-        //array[i] = array[i + 1];
-    }
-    array[size] = v;
-    size++;
     if (size == capacityInt)
     {
         T *temp = new T[capacityInt * 2];
@@ -101,38 +127,34 @@ void CircularDynamicArray<T>::addEnd(T v)
         array = temp;
         capacityInt = capacityInt * 2;
     }
-
-
-
+    array[size] = v;
+    size++;
 }
 
-//add a addFront fucntion that stores the input v at the beginning of the array and increases the size of the array by 1. Should double capactiy when the new element doesn't fit.
 template <class T>
 void CircularDynamicArray<T>::addFront(T v)
 {
+    if (size == capacityInt)
+    {
+        T *temp = new T[capacityInt * 2];
+        for (int i = 0; i < size; i++)
+        {
+            temp[i] = array[i];
+        }
+        delete[] array;
+        array = temp;
+        capacityInt = capacityInt * 2;
+    }
     for (int i = size; i > 0; i--)
     {
         array[i] = array[i - 1];
     }
     array[0] = v;
     size++;
-    if (size == capacityInt)
-    {
-        T *temp = new T[capacityInt * 2];
-        for (int i = 0; i < size; i++)
-        {
-            temp[i] = array[i];
-        }
-        delete[] array;
-        array = temp;
-        capacityInt = capacityInt * 2;
-    }
 }
 
-//the delEnd() function should shrink the capacity when only 25% of the array is being used
 template <class T>
 void CircularDynamicArray<T>::delEnd()
-//use a for loop to iterate to the back of the array and delete the last element. Also update the size.
 {
     size--;
     if (size < (capacityInt / 4))
@@ -178,7 +200,6 @@ int CircularDynamicArray<T>::length()
     return size;
 }
 
-//implement the int capacity function
 template <class T>
 int CircularDynamicArray<T>::capacity()
 {
@@ -188,113 +209,47 @@ int CircularDynamicArray<T>::capacity()
 template <class T>
 void CircularDynamicArray<T>::clear()
 {
-    size = 0;
-    front = 0;
-    back = 0;
+    delete[] array;
+    this->capacityInt = 2;
+    this->size = 0;
+    this->front = 0;
+    this->back = 0;
+    this->array = new T[capacityInt];
 }
 
-template <class T>
+template <class T> 
 T CircularDynamicArray<T>::QuickSelect(int k)
 {
-    if (k < 0 || k >= size)
-    {
-        cout << "Index out of bounds" << endl;
-    }
-    else
-    {
-        int left = 0;
-        int right = size - 1;
-        while (left <= right)
-        {
-            int pivot = array[left];
-            int i = left + 1;
-            int j = right;
-            while (i <= j)
-            {
-                while (i <= j && array[i] <= pivot)
-                {
-                    i++;
-                }
-                while (i <= j && array[j] > pivot)
-                {
-                    j--;
-                }
-                if (i < j)
-                {
-                    T temp = array[i];
-                    array[i] = array[j];
-                    array[j] = temp;
-                }
-            }
-            T temp = array[left];
-            array[left] = array[j];
+
+    int pivot = rand() % size;
+    T pivotValue = array[pivot];
+    int left = 0;
+    int right = size - 1;
+    int i = 0;
+    int j = size - 1;
+    while (i <= j) {
+        while (array[i] < pivotValue) {
+            i++;
+        }
+        while (array[j] > pivotValue) {
+            j--;
+        }
+        if (i <= j) {
+            T temp = array[i];
+            array[i] = array[j];
             array[j] = temp;
-            if (j == k)
-            {
-                return array[j];
-            }
-            else if (j < k)
-            {
-                left = j + 1;
-            }
-            else
-            {
-                right = j - 1;
-            }
+            i++;
+            j--;
         }
     }
-}
-
-
-template <class T>
-T CircularDynamicArray<T>::WCSelect(int k) //bad, it fails the phase1main test
-{
-    if (k < 0 || k >= size)
-    {
-        cout << "Index out of bounds" << endl;
+    if (k <= j) {
+        return QuickSelect(k);
     }
-    else
-    {
-        int left = 0;
-        int right = size - 1;
-        while (left <= right)
-        {
-            int pivot = array[left];
-            int i = left + 1;
-            int j = right;
-            while (i <= j)
-            {
-                while (i <= j && array[i] >= pivot)
-                {
-                    i++;
-                }
-                while (i <= j && array[j] < pivot)
-                {
-                    j--;
-                }
-                if (i < j)
-                {
-                    T temp = array[i];
-                    array[i] = array[j];
-                    array[j] = temp;
-                }
-            }
-            T temp = array[left];
-            array[left] = array[j];
-            array[j] = temp;
-            if (j == k)
-            {
-                return array[j];
-            }
-            else if (j < k)
-            {
-                left = j + 1;
-            }
-            else
-            {
-                right = j - 1;
-            }
-        }
+    else if (k >= i) {
+        return QuickSelect(k);
+    }
+    else {
+        return array[k] - 1;
     }
 }
 
@@ -302,28 +257,23 @@ T CircularDynamicArray<T>::WCSelect(int k) //bad, it fails the phase1main test
 template <class T>
 void CircularDynamicArray<T>::stableSort()
 {
-    int i, j, k;
-    for (i = 1; i < size; i++)
-    {
-        T temp = array[i];
-        j = i - 1;
-        while (j >= 0 && array[j] > temp)
-        {
-            array[j + 1] = array[j];
-            j--;
+    for (int i=0; i<size; i++) {
+        for (int j=0; j<size-1; j++) {
+            if (array[j] > array[j+1]) {
+                T temp = array[j];
+                array[j] = array[j+1];
+                array[j+1] = temp;
+            }
         }
-        array[j + 1] = temp;
     }
 }
 
 template <class T>
-
-int CircularDynamicArray<T>::linearSearch(T v) //bad, it fails the phase1main test
+int CircularDynamicArray<T>::linearSearch(T v) 
 {
-    for (int i = 0; i < size; i++)
-    {
-        if (array[i] == v)
-        {
+
+    for (int i=0; i<size; i++) {
+        if (array[i] == v) {
             return i;
         }
     }
@@ -333,38 +283,35 @@ int CircularDynamicArray<T>::linearSearch(T v) //bad, it fails the phase1main te
 template <class T>
 int CircularDynamicArray<T>::binSearch(T v)
 {
-    int left = 0;
-    int right = size - 1;
-    while (left <= right)
-    {
-        int mid = (left + right) / 2;
-        if (array[mid] == v)
-        {
+
+    //binary search of the array looing for the item 2. return the index of the item if found or -1 if not found.
+    int low = 0;
+    int high = size - 1;
+    int mid;
+    while (low <= high) {
+        mid = (low + high) / 2;
+        if (array[mid] == v) {
             return mid;
         }
-        else if (array[mid] < v)
-        {
-            left = mid + 1;
+        else if (array[mid] < v) {
+            low = mid + 1;
         }
-        else
-        {
-            right = mid - 1;
+        else {
+            high = mid - 1;
         }
     }
     return -1;
+
 }
 
 template <class T>
 void CircularDynamicArray<T>::reverse()
 {
-    int i = 0;
-    int j = size - 1;
-    while (i < j)
+    T temp;
+    for (int i = 0; i < size / 2; i++)
     {
-        T temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-        i++;
-        j--;
+        temp = array[i];
+        array[i] = array[size - i - 1];
+        array[size - i - 1] = temp;
     }
 }
