@@ -199,36 +199,32 @@ class CircularDynamicArray
             this->array = new T[capacityInt];
         }
         T QuickSelect(int k) {
-            int pivot = rand() % size;
-            T pivotValue = array[pivot];
-            int left = 0;
-            int right = size - 1;
-            int i = 0;
-            int j = size - 1;
-            while (i <= j) {
-                while (array[i] < pivotValue) {
-                    i++;
-                }
-                while (array[j] > pivotValue) {
-                    j--;
-                }
-                if (i <= j) {
-                    T temp = array[i];
-                    array[i] = array[j];
-                    array[j] = temp;
-                    i++;
-                    j--;
-                }
+
+            
+            int first = array[0];
+            int middle = array[size / 2];
+            int last = array[size - 1];
+            int pivot = (first + middle + last) / 3;
+            //three emtpy lists: LEG
+            T *L = new T[size];
+            T *E = new T[size];
+            T *G = new T[size];
+            //if x < pivot, add to L
+            if (array[k] < pivot) {
+                L[k] = array[k];
             }
-            if (k <= j) {
-                return QuickSelect(k);
-            }
-            else if (k >= i) {
-                return QuickSelect(k);
+            else if (array[k] == pivot) {
+                E[k] = array[k];
             }
             else {
-                return array[k]-1;
+                G[k] = array[k];
             }
+
+            return array[k];
+
+
+
+
         }
         void stableSort() {
             for (int i=0; i<size; i++) {

@@ -221,36 +221,40 @@ template <class T>
 T CircularDynamicArray<T>::QuickSelect(int k) //this is the QuickSelect function that returns the kth smallest element
 {
 
-    int pivot = rand() % size; //this is the pivot set to a random number between 0 and the size
-    T pivotValue = array[pivot]; //this is the pivotValue set to the array at the pivot
-    int left = 0; //this is the left set to 0
-    int right = size - 1; //this is the right set to the size minus 1
-    int i = 0; //this is i set to 0
-    int j = size - 1; //this is j set to the size minus 1
-    while (i <= j) { //this is a while loop that goes through the array and swaps the values
-        while (array[i] < pivotValue) {
-            i++;
-        }
-        while (array[j] > pivotValue) {
-            j--;
-        }
-        if (i <= j) { 
-            T temp = array[i]; 
-            array[i] = array[j]; 
-            array[j] = temp;
-            i++; 
-            j--;
-        }
-    }
-    if (k <= j) { //this if statement checks if k is less than or equal to j and returns the QuickSelect function
-        return QuickSelect(k);
-    }
-    else if (k >= i) { //this if statement checks if k is greater than or equal to i and returns the QuickSelect function
-        return QuickSelect(k);
-    }
-    else { //this else statement returns the array at k minus 1
-        return array[k] - 1;
-    }
+    i// //int pivot = rand() % size;
+            // //T pivotValue = array[pivot];
+
+
+            // T pivotValue = array[size / 2];
+
+            // int left = 0;
+            // int right = size - 1;
+            // int i = 0;
+            // int j = size - 1;
+            // while (i <= j) {
+            //     while (array[i] < pivotValue) {
+            //         i++;
+            //     }
+            //     while (array[j] > pivotValue) {
+            //         j--;
+            //     }
+            //     if (i <= j) {
+            //         T temp = array[i];
+            //         array[i] = array[j];
+            //         array[j] = temp;
+            //         i++;
+            //         j--;
+            //     }
+            // }
+            // if (k <= j) {
+            //     return QuickSelect(k);
+            // }
+            // else if (k >= i) {
+            //     return QuickSelect(k);
+            // }
+            // else {
+            //     return array[k]-1;
+            // }
 }
 
 
