@@ -28,8 +28,10 @@ int main(){
 	// C => "2 3 4 5 6 7 8 100 200"	
 
 	C.addEnd(300.0);
-	C.addEnd(400.0);
+	C.addEnd(400.0); 
 	// C => "2 3 4 5 6 7 8 100 200 300 400"	
+
+
 	
 	C.reverse();
 	for (int i=0; i< C.length();i++) cout << C[i] << " ";  cout << endl;
@@ -56,6 +58,7 @@ int main(){
 	// A => "0 1 2 3 4 5 6 7 8 9 15 19" Search => 10	
 	A.addFront(10); 
 	// A => "10 0 1 2 3 4 5 6 7 8 9 15 19"
+
 	cout << "Select is " << A.linearSearch(5) << endl;
 	// A => "10 0 1 2 3 4 5 6 7 8 9 15 19" Search => 6
 	cout << "Select is " << A.QuickSelect(3) << endl;
