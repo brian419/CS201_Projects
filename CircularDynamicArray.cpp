@@ -1,172 +1,179 @@
 #include <iostream>
 #include <string>
+#include <random>
 
 using namespace std;
 
 template <class T>
-class CircularDynamicArray //this is the class for the circular dynamic array
+class CircularDynamicArray 
 {
-    private: //these are private variables that are used in the class
+    private: 
         T *array;
         int size;
         int front;
         int back;
-        int capacityInt;
+        int capacityInt; 
         bool isReversed;
         bool originalCall;
-    public: //these are the public functions that are used in the class
-        CircularDynamicArray() { //Default constructor. Capacity of 2 and size of 0. 
+    public: 
+        CircularDynamicArray() { 
             this->capacityInt = 2;
             this->size = 0;
             this->front =0;
             this->back = 0;
             this->array = new T[capacityInt];
-            this->isReversed = false; //Sets isReversed flag to false as an initializer. 
-            this->originalCall = true; //Sets originalCall flag to true as an initializer. This will be used to make sure when calling if (isReversed), I don't 
-            //run into an ifinite loop because I will be calling the opposite functions. ex. if (isReversed) {addFront} will call addEnd. If I don't have this originalCall flag,
-            //it will call addFront again and again, etc. 
+            this->isReversed = false; 
+            this->originalCall = true; 
+            
         }
-        CircularDynamicArray(int s) { //Constructor for an int s. Sets capacity to s, size to s. 
+        CircularDynamicArray(int s) {  
             this->capacityInt = s;
             this->size = s;
             this->front = 0;
             this->back = 0;
             this->array = new T[capacityInt];
-            //set isReversed to 0
+            
             this->isReversed = false;
             this->originalCall = true;
         }
-        CircularDynamicArray(const CircularDynamicArray<T> &otherArray) { //Copy constructor.
+        CircularDynamicArray(const CircularDynamicArray<T> &otherArray) { 
             this->capacityInt = otherArray.capacityInt;
             this->size = otherArray.size;
-            this->front = front;
-            this->back = back;
+            this->front = otherArray.front;
+            this->back = otherArray.back;
+            this->isReversed = otherArray.isReversed;
             this->originalCall = true;
             this->array = new T[capacityInt];
             for (int i = 0; i < size; i++)
             {
-                array[i] = otherArray.array[i]; //Copies one array into the other.
+                array[i] = otherArray.array[i]; 
             }
             
             
         }
-        CircularDynamicArray<T>& operator=(const CircularDynamicArray<T> &otherArrayB) { //Assignment operator.
+        CircularDynamicArray<T>& operator=(const CircularDynamicArray<T> &otherArrayB) { 
             if (this != &otherArrayB)
             {
                 delete[] array;
                 this->capacityInt = otherArrayB.capacityInt;
                 this->size = otherArrayB.size;
-                this->front = front;
-                this->back = back;
+                this->front = otherArrayB.front;
+                this->back = otherArrayB.back;
                 this->originalCall = true;
+                this->isReversed = otherArrayB.isReversed;
                 this->array = new T[capacityInt];
                 
-                for (int i = 0; i < size; i++)
+                for (int i = 0; i < capacityInt; i++)
                 {
-                    array[i] = otherArrayB.array[i]; //Copies one array into the other.
+                    array[i] = otherArrayB.array[i]; 
                 }
             }
             return *this;
         }
-        ~CircularDynamicArray() { //Destructor.
+        ~CircularDynamicArray() { 
             delete[] array; 
         }
-        T& operator[](int i) { // Elmtype& operator[](int i); 
+        T& operator[](int i) {  
             if (i < 0 || i >= size) {
-                cout << "Error: Index out of bounds" << endl; //prints a message if i is out of bounds               
+                cout << "Error: Index out of bounds" << endl; 
+                T *referenceValue = new T;
+                return *referenceValue;
             }
             else {
                 if (isReversed == false) {
-                    return array[i];
+                    return array[(front + i) % capacityInt];
                 }
                 else {
-                    return array[size - i - 1]; //this returns the value at the index i from the end of the array
+                    return array[(front + size - i - 1) % capacityInt]; 
                 }
             }
         }
         void addEnd(T v) {
-            if (isReversed) { //This checks if the array is reversed. If it is, it will call addFront instead of addEnd.
-                originalCall = false; //This is needed so that we don't get a loop. 
-                addFront(v); //This calls addFront instead of addEnd.
-                originalCall = true; //Set originaCall back to true for next time.
+            if (isReversed  && originalCall) { 
+                originalCall = false; 
+                addFront(v); 
+                originalCall = true; 
                 return; 
             }
-            if (size == capacityInt) {  //This checks if the new element can't fit and doubles the capacity. 
+            if (size == capacityInt) { 
                 T *temp = new T[capacityInt * 2];
                 for (int i = 0; i < size; i++) {
-                    temp[i] = array[i];
+                    temp[i] = array[(front + i) % capacityInt];
                 }
                 delete[] array;
                 array = temp;
                 capacityInt = capacityInt * 2;
+                front = 0;
             }
-            array[size] = v; //This will add the input v to the end of the array.
-            back = (back + 1) % capacityInt;  //This is so we can keep track of the udpated back value
+            array[(front + size) % capacityInt] = v; 
+            back = (back + 1) % capacityInt;  
             size++;
             
         }
         void addFront(T v) {
-            if (isReversed && originalCall) { //This checks if the array is reversed. If it is, it will call addEnd instead of addFront.
+            if (isReversed && originalCall) { 
                 originalCall = false; 
                 addEnd(v);
                 originalCall = true;
                 return;
             }
-            if (size == capacityInt) { //This checks if the new element can't fit and doubles the capacity.
+            if (size == capacityInt) { 
                 T *temp = new T[capacityInt * 2];
                 for (int i = 0; i < size; i++) {
-                    temp[i] = array[i];
+                    temp[i + 1] = array[(front + i) % capacityInt];
                 }
                 delete[] array;
+                front = 1;
                 array = temp;
                 capacityInt = capacityInt * 2;
             }
-            for (int i = size; i > 0; i--) { //This will shift all the elements in the array to the right by 1 because we are adding to the front.
-                array[i] = array[i - 1];
-            }
-            array[0] = v; //This will add the input v to the front of the array.
-            front = (front + 1) % capacityInt; //This is so we can keep track of the updated front value
-            size++;  
+            
+            front = (front - 1 + capacityInt) % capacityInt;
+            array[front] = v;
+            size++; 
+
+
         }
         void delEnd() {
-            if (isReversed && originalCall) { //This checks if the array is reversed. If it is, it will call delFront instead of delEnd.
+            if (isReversed && originalCall) { 
                 originalCall = false;
                 delFront(); 
                 originalCall = true;
                 return;
             }
-            if (size < capacityInt / 4) { //This checks if the array is 25% of the array is in use after the delete. If it is, it will halve the capacity.
+            if (size < capacityInt / 4) { 
                 T *temp = new T[capacityInt / 2];
                 for (int i = 0; i < size; i++) {
-                    temp[i] = array[i]; 
+                    temp[i] = array[(front + i) % capacityInt]; 
                 }
                 delete[] array;
+                front = 0;
+                back = size - 1;
                 array = temp;
                 capacityInt = capacityInt / 2;
             }
-            back = (back - 1) % capacityInt; //This is so we can keep track of the updated back value 
+            back = (back - 1 + capacityInt) % capacityInt; 
             size--; 
         }
         void delFront() {
-            if (isReversed && originalCall) { //This checks if the array is reversed. If it is, it will call delEnd instead of delFront.
+            if (isReversed && originalCall) {
                 originalCall = false;
                 delEnd();
                 originalCall = true;
                 return;
             }
-            if (size < capacityInt / 4) { //This checks if the array is 25% of the array is in use after the delete. If it is, it will halve the capacity.
+            if (size < capacityInt / 4) { 
                 T *temp = new T[capacityInt / 2];
                 for (int i = 0; i < size; i++) {
-                    temp[i] = array[i];
+                    temp[i] = array[(front + i) % capacityInt]; 
                 }
                 delete[] array;
+                front = 0;
+                back = size - 1;
                 array = temp;
                 capacityInt = capacityInt / 2;
             }
-            for (int i = 0; i < size; i++) { //This will shift all the elements in the array to the left by 1 because we are deleting from the front.
-                array[i] = array[i + 1];
-            }
-            front = (front + 1) % capacityInt; //This is so we can keep track of the updated front value
+            front = (front + 1) % capacityInt; 
             size--;
         }
 
@@ -176,79 +183,161 @@ class CircularDynamicArray //this is the class for the circular dynamic array
         int capacity() {
             return capacityInt;
         }
-        void clear() { //This clears the array by deleting the array. It also resets everything. 
+        void clear() { 
             delete[] array;
             this->capacityInt = 2;
             this->size = 0;
             this->front = 0;
             this->back = 0;
-            this->array = new T[capacityInt]; //This will create a new array, and this->capacityInt makes the capacity of the new array set to 2 again.
+            this->array = new T[capacityInt]; 
         }
-        T QuickSelect(int k) { 
-            int first = array[0]; //Here, we are finding the pivot using pivot = median(A[low], A[(low + high)/2], A[high)])
-            int middle = array[size / 2];
-            int last = array[size - 1];
-            int pivot = (first + middle + last) / 3;
+        T QuickSelectHelper(T Arr[], int k, int sizeB) {
+        
 
-            T *L = new T[size]; //We are creating three empty lists: L, E, G
-            T *E = new T[size];
-            T *G = new T[size];
-            if (array[k] < pivot) { //We test to see if x < pivot, x == pivot, or x > pivot and add to the approparite list.
-                L[k] = array[k];
+            int pivot = Arr[rand() % sizeB];
+
+            T *L = new T[sizeB];
+            T *E = new T[sizeB];
+            T *G = new T[sizeB];
+
+            int Lsize = 0;
+            int Esize = 0;
+            int Gsize = 0;
+
+            for (int i=0; i < sizeB; i++) {
+                if (Arr[i] < pivot) {
+                    L[Lsize] = Arr[i];
+                    Lsize++;
+                } else if (Arr[i] == pivot) {
+                    E[Esize] = Arr[i];
+                    Esize++;
+                } else if (Arr[i] > pivot) {
+                    G[Gsize] = Arr[i];
+                    Gsize++;
+                }
             }
-            else if (array[k] == pivot) {
-                E[k] = array[k];
+
+            if (k <= Lsize) {
+                return QuickSelectHelper(L, k, Lsize);
+            } else if (k <= (Lsize + Esize)) {
+                return pivot;
+            } else {
+                return QuickSelectHelper(G, k-Lsize-Esize, Gsize);
             }
-            else {
-                G[k] = array[k];
+            
+            
+        }
+
+        T QuickSelect(int k) { 
+            T *newArray = new T[size];
+
+            for (int i = 0; i < size; i++) {
+                newArray[i] = array[(front + i)% capacityInt];
             }
-            return array[k]; //We will return the kth smallest element in the array.
+            return QuickSelectHelper(newArray, k, size); 
+            
+        }
+
+        void merge(T *Arr, int p, int q, int r) {
+            int n1 = q - p + 1;
+            int n2 = r - q ;
+
+            T L[n1];
+            T R[n2];
+            for (int i=0; i < n1; i++) {
+                L[i] = Arr[p + i];
+            }
+            for (int j=0; j < n2; j++){
+                R[j] = Arr[q + j + 1];
+            }
+            
+            int i = 0;
+            int j = 0;
+            int k;
+            for (k = p; k <= r; k++) {
+                if (i >= n1 || j >= n2) {
+                    break;
+                }
+                if (L[i] <= R[j]) {
+                    Arr[k] = L[i];
+                    i = i + 1;
+                } 
+                else {
+                    Arr[k] = R[j];
+                    j = j+1;
+                }
+            }  
+            if (i < n1) {
+                for (int h = k; h <= r; h++) {
+                    Arr[h] = L[i];
+                    i = i + 1;
+                }
+            } else if (j < n2) {
+                for (int h = k; h <= r; h++) {
+                    Arr[h] = R[j];
+                    j = j+1;
+                }
+            }
+        }
+
+        void mergeSort(T Arr[], int p, int r) {
+            int q = (p + r) / 2;
+            if (p >= r) {
+                return;
+            }
+            mergeSort(Arr, p, q);
+            mergeSort(Arr, q + 1, r);
+            merge(Arr, p, q, r);
         }
         void stableSort() {
-            for (int i=0; i<size; i++) {
-                for (int j=0; j<size-1; j++) {
-                    if (array[j] > array[j+1]) {
-                        T temp = array[j];
-                        array[j] = array[j+1];
-                        array[j+1] = temp;
-                    }
-                }
+            T *newArray = new T[size];
+
+            for (int i = 0; i < size; i++) {
+                newArray[i] = array[(front + i)% capacityInt];
+
             }
+            mergeSort(newArray, 0, size - 1);
+            array = newArray;
+            front = 0;
+            isReversed = false;
+            back = size - 1;
+
         }
         int linearSearch(T v) {
-            for (int i = 0; i < size; i++) //Searches through the array
+            for (int i = 0; i < size; i++) 
             {
-                if (array[i] == v) //If statement checks when the value of v is found in the array
+                if (array[(front + i) % capacityInt] == v)
                 {
-                    return i; //returns the index of the value of v when found
+                    return i; 
                 }
             }
-            return -1;  //if not found, it returns -1
+            return -1;  
         }
+
+        int binSearchHelper(T Arr[], int l, int r, T v) {
+            if (r >= l) {
+                int m = l + (r - l) / 2;
+                if (Arr[m] == v) {
+                    return m;
+                }
+                if (Arr[m] > v) {
+                    return binSearchHelper(Arr, l, m - 1, v);
+                }
+                return binSearchHelper(Arr, m + 1, r, v);
+            }
+            return -1;
+            
+        }
+
         int binSearch(T v) {
-            int left = 0; //first element of the array
-            int right = size - 1; //last element of the array
-            while (left <= right) //While we aren't at the end of the array
-            { 
-                int mid = (left + right) / 2; 
-                if (array[mid] == v) //if the middle of the array is v, we just return where the middle is
-                {
-                    return mid;
-                }
-                else if (array[mid] < v) //if the middle of the array is less than v, we move the left to the middle + 1
-                {
-                    left = mid + 1;
-                }
-                else
-                {
-                    right = mid - 1; //if the middle of the array is greater than v, we move the right to the middle - 1
-                }
-            }
-            return -1; //if not found, it returns -1
+
+            return binSearchHelper(array, 0, size - 1, v);
+
         }
+
         void reverse() {
 
-            if (isReversed == false) { //isReversed checks if the array has been reversed. If it hasn't, we set the flag to true because reverse() calls and the array would have reversed. And vice versa. 
+            if (isReversed == false) { 
                 isReversed = true;
             }
             else {
@@ -256,4 +345,3 @@ class CircularDynamicArray //this is the class for the circular dynamic array
             }
         }
 };
-
